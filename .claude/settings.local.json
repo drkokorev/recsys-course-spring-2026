@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip list:*)",
+      "Bash(pip install:*)",
+      "Bash(conda run:*)",
+      "Bash(/opt/anaconda3/bin/conda run:*)",
+      "Bash(/opt/anaconda3/bin/pip uninstall:*)"
+    ]
+  }
+}
