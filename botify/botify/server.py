@@ -39,6 +39,7 @@ catalog.upload_tracks(tracks_redis.connection)
 catalog.upload_artists(artists_redis.connection)
 
 random_recommender = Random(tracks_redis.connection)
+<<<<<<< Updated upstream
 sticky_artist_recommender = StickyArtist(tracks_redis, artists_redis, catalog)
 
 catalog.upload_recommendations(
@@ -79,6 +80,9 @@ dlrm_sasrec_rerank_i2i_recommender = I2IRecommender(
     recommendations_dlrm_sasrec_rerank_redis.connection,
     random_recommender,
 )
+=======
+sticky_artist_recommender = StickyArtist(tracks_redis.connection, artists_redis.connection)
+>>>>>>> Stashed changes
 
 parser = reqparse.RequestParser()
 parser.add_argument("track", type=int, location="json", required=True)
@@ -118,16 +122,27 @@ class NextTrack(Resource):
         args = parser.parse_args()
         persist_user_listen_history(user, args.track, args.time)
 
+<<<<<<< Updated upstream
         treatment = Experiments.HOMEWORK2.assign(user)
 
         if treatment == Treatment.C:
             recommender = sasrec_i2i_recommender
         elif treatment == Treatment.T1:
             recommender = dlrm_sasrec_rerank_i2i_recommender
+=======
+        treatment = Experiments.STICKY_ARTIST.assign(user)
+
+        if treatment == Treatment.T1:
+            recommender = sticky_artist_recommender
+>>>>>>> Stashed changes
         else:
             recommender = sasrec_i2i_recommender
 
         recommendation = recommender.recommend_next(user, args.track, args.time)
+<<<<<<< Updated upstream
+=======
+        experiments = {Experiments.STICKY_ARTIST.name: treatment.name}
+>>>>>>> Stashed changes
 
         data_logger.log(
             "next",
@@ -147,7 +162,11 @@ class LastTrack(Resource):
     def post(self, user: int):
         start = time.time()
         args = parser.parse_args()
+<<<<<<< Updated upstream
         persist_user_listen_history(user, args.track, args.time)
+=======
+        treatment = Experiments.STICKY_ARTIST.assign(user)
+>>>>>>> Stashed changes
         data_logger.log(
             "last",
             Datum(
@@ -156,7 +175,12 @@ class LastTrack(Resource):
                 args.track,
                 args.time,
                 time.time() - start,
+<<<<<<< Updated upstream
             )
+=======
+            ),
+            experiments={Experiments.STICKY_ARTIST.name: treatment.name},
+>>>>>>> Stashed changes
         )
         return {"user": user}
 
