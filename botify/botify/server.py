@@ -13,6 +13,7 @@ from gevent.pywsgi import WSGIServer
 from botify.data import DataLogger, Datum
 from botify.experiment import Experiments, Treatment
 from botify.recommenders.i2i import I2IRecommender
+from botify.recommenders.online_ranker import OnlineRankerRecommender
 from botify.recommenders.random import Random
 from botify.track import Catalog
 
@@ -65,7 +66,6 @@ catalog.upload_recommendations(
     key_recommendations="recommendations",
 )
 
-
 sasrec_i2i_recommender = I2IRecommender(
     listen_history_redis.connection,
     recommendations_contextual_redis.connection,
@@ -76,6 +76,16 @@ dlrm_sasrec_rerank_i2i_recommender = I2IRecommender(
     listen_history_redis.connection,
     recommendations_dlrm_sasrec_rerank_redis.connection,
     random_recommender,
+)
+
+online_ranker_recommender = OnlineRankerRecommender(
+    listen_history_redis.connection,
+    recommendations_contextual_redis.connection,
+    recommendations_lfm_redis.connection,
+    recommendations_dlrm_sasrec_rerank_redis.connection,
+    app.config["ONLINE_RANKER_MODEL_PATH"],
+    app.config["TRACKS_CATALOG"],
+    dlrm_sasrec_rerank_i2i_recommender,
 )
 
 parser = reqparse.RequestParser()
@@ -121,7 +131,7 @@ class NextTrack(Resource):
         if treatment == Treatment.C:
             recommender = sasrec_i2i_recommender
         elif treatment == Treatment.T1:
-            recommender = dlrm_sasrec_rerank_i2i_recommender
+            recommender = online_ranker_recommender
         else:
             recommender = sasrec_i2i_recommender
 

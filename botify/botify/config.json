@@ -26,6 +26,8 @@
   "REDIS_RECOMMENDATIONS_DLRM_SASREC_RERANK_DB": 5,
   "RECOMMENDATIONS_DLRM_SASREC_RERANK_FILE_PATH": "./data/dlrm_sasrec_rerank_i2i.jsonl",
 
+  "ONLINE_RANKER_MODEL_PATH": "./data/online_ranker_model.json",
+
   "TRACKS_CATALOG": "./data/tracks.json",
   "DATA_LOG_FILE": "./log/data.json",
   "DATA_LOG_FILE_MAX_BYTES": 104857600,
